@@ -13,6 +13,14 @@
 // #define RENDERDOC_STDOUT        : to the stream object used for logging messages, warnings and errors
 // #define RENDERDOC_CAPTURE_PATH  : to the location where you would like to save the captures; defaults to
 //                                   a "RenderDocCaptures" folder relative to the path of this header file
+//
+// You may also override the following macros:
+// RenderDocAssert(exrp)
+// RENDERDOC_LIB
+// LoadRenderDocLibrary(lib_name)  : takes a (const char*) library filename (full path)
+//                                   and returns a (void*) library handle
+// GetRenderDocProcAddr(dll,proc)  : takes a (void*) library handle and a (const char*) proc name
+//                                   and returns a (void*) proc address
 
 #ifndef RENDERDOC_ENABLED
 #define RENDERDOC_ENABLED (1)
@@ -24,24 +32,14 @@
 #define RENDERDOC_PATH <path-to-renderdoc>
 #endif//RENDERDOC_PATH
 
-#ifndef RENDERDOC_STDOUT
+#ifndef RENDERDOC_LOG
 #include <iostream>
-#define RENDERDOC_STDOUT std::cout
-#endif//RENDERDOC_STDOUT
+#define RENDERDOC_LOG std::cout
+#endif//RENDERDOC_LOG
 
 #ifndef RENDERDOC_CAPTURE_PATH
 #define RENDERDOC_CAPTURE_PATH __FILE__ "/../RenderDocCaptures/capture"
 #endif//RENDERDOC_CAPTURE_PATH
-
-#ifndef XSTR
-#define XSTR(x) #x
-#endif//XSTR
-
-#ifndef STR
-#define STR(x) XSTR(x)
-#endif//XSTR
-
-#include STR(RENDERDOC_PATH/renderdoc_app.h)
 
 #ifndef RENDERDOC_AUTOINIT
 #define RENDERDOC_AUTOINIT (1)
@@ -56,6 +54,7 @@
     #ifdef _WIN32
         #define RENDERDOC_LIB                   renderdoc.dll
     #else
+        // TODO: implement for Linux
         #define RENDERDOC_LIB                   RenderDocAssert(false)
     #endif
 #endif//RENDERDOC_LIB
@@ -63,8 +62,9 @@
 #ifndef LoadRenderDocLibrary
     #ifdef _WIN32
         #include <Windows.h>
-        #define LoadRenderDocLibrary(dll)       LoadLibrary( TEXT(dll) )
+        #define LoadRenderDocLibrary(dll)       (void*)LoadLibrary( TEXT(dll) )
     #else
+        // TODO: implement for Linux
         #define LoadRenderDocLibrary(dll)       RenderDocAssert(false)
     #endif
 #endif//RENDERDOC_LIB
@@ -72,11 +72,22 @@
 #ifndef GetRenderDocProcAddr
     #ifdef _WIN32
         #include <Windows.h>
-        #define GetRenderDocProcAddr(dll,proc)  GetProcAddress(dll, proc)
+        #define GetRenderDocProcAddr(dll,proc)  GetProcAddress((HMODULE)dll, proc)
     #else
+        // TODO: implement for Linux
         #define GetRenderDocProcAddr(dll,proc)  RenderDocAssert(false)
     #endif
 #endif//RENDERDOC_LIB
+
+#ifndef XSTR
+#define XSTR(x) #x
+#endif//XSTR
+
+#ifndef STR
+#define STR(x) XSTR(x)
+#endif//XSTR
+
+#include STR(RENDERDOC_PATH/renderdoc_app.h)
 
 typedef RENDERDOC_API_1_0_0 RENDERDOC_API_CONTEXT;
 static RENDERDOC_API_CONTEXT* RenderDocAPI = /*nullptr*/ NULL;
@@ -91,8 +102,8 @@ static bool InitRenderDoc()
 
     /*auto*/ void* hRenderDocLib = LoadRenderDocLibrary( STR(RENDERDOC_PATH/RENDERDOC_LIB) );
     RenderDocAssert(hRenderDocLib);
-    RENDERDOC_STDOUT << "Loaded runtime library 'renderdoc.dll' at location " << hRenderDocLib << "\n";
-    pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)GetRenderDocProcAddr((HMODULE)hRenderDocLib, "RENDERDOC_GetAPI");
+    RENDERDOC_LOG << "Loaded runtime library 'renderdoc.dll' at location " << hRenderDocLib << "\n";
+    pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)GetRenderDocProcAddr(hRenderDocLib, "RENDERDOC_GetAPI");
     RenderDocAssert(RENDERDOC_GetAPI);
 
     /*auto*/ int status = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_0_0, (void**)&RenderDocAPI);
