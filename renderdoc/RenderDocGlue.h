@@ -32,11 +32,6 @@
 #define RENDERDOC_PATH <path-to-renderdoc>
 #endif//RENDERDOC_PATH
 
-#ifndef RENDERDOC_LOG
-#include <iostream>
-#define RENDERDOC_LOG std::cout
-#endif//RENDERDOC_LOG
-
 #ifndef RENDERDOC_CAPTURE_PATH
 #define RENDERDOC_CAPTURE_PATH __FILE__ "/../RenderDocCaptures/capture"
 #endif//RENDERDOC_CAPTURE_PATH
@@ -49,6 +44,11 @@
     #include <cassert>
     #define RenderDocAssert(expr) assert(expr)
 #endif
+
+#ifndef RenderDocPrint
+    #include <stdio.h>
+    #define RenderDocPrint(msg)                 printf("%s", msg)
+#endif//RenderDocPrint
 
 #ifndef RENDERDOC_LIB
     #ifdef _WIN32
@@ -92,6 +92,15 @@
 typedef RENDERDOC_API_1_0_0 RENDERDOC_API_CONTEXT;
 static RENDERDOC_API_CONTEXT* RenderDocAPI = /*nullptr*/ NULL;
 
+#include <stdio.h>  // sprintf_s
+static void RenderDocPrintHandle(void* p)
+{
+    // TODO: sprintf_s is overkill/invasive here...
+    char text [sizeof(void*) * 4] = { 0 };
+    sprintf_s(text, sizeof(text), "%p", p);
+    RenderDocPrint(text);
+}
+
 static bool InitRenderDoc()
 {
     // already initialized?
@@ -102,7 +111,9 @@ static bool InitRenderDoc()
 
     /*auto*/ void* hRenderDocLib = LoadRenderDocLibrary( STR(RENDERDOC_PATH/RENDERDOC_LIB) );
     RenderDocAssert(hRenderDocLib);
-    RENDERDOC_LOG << "Loaded runtime library 'renderdoc.dll' at location " << hRenderDocLib << "\n";
+    RenderDocPrint("RenderDocGlue: Loaded runtime library 'renderdoc.dll' at location ");
+    RenderDocPrintHandle(hRenderDocLib);
+    RenderDocPrint("\n");
     pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)GetRenderDocProcAddr(hRenderDocLib, "RENDERDOC_GetAPI");
     RenderDocAssert(RENDERDOC_GetAPI);
 
@@ -161,6 +172,9 @@ static void FinishCapturingGPUActivity(void* device = NULL)
 
     if (NewestCapture)
     {
+        RenderDocPrint("RenderDocGlue: frame captured to file '");
+        RenderDocPrint(NewestCapture);
+        RenderDocPrint("'\n");
         if (!RenderDocAPI->IsRemoteAccessConnected())
         {
             RenderDocAPI->LaunchReplayUI(false, NewestCapture);
