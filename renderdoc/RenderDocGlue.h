@@ -10,6 +10,7 @@
 // #define RENDERDOC_ENABLED       : to either (0) or (1); if not specified, defaults to (1) -- enabled
 // #define RENDERDOC_PATH          : to the location of RenderDoc (DO NOT enclose the path with quotes...);
 //                                   defaults to a hard-coded location on my development environment!
+// #define RENDERDOC_STDOUT        : to the stream object used for logging messages, warnings and errors
 // #define RENDERDOC_CAPTURE_PATH  : to the location where you would like to save the captures; defaults to
 //                                   a "RenderDocCaptures" folder relative to the path of this header file
 
@@ -22,6 +23,11 @@
 #ifndef RENDERDOC_PATH
 #define RENDERDOC_PATH <path-to-renderdoc>
 #endif//RENDERDOC_PATH
+
+#ifndef RENDERDOC_STDOUT
+#include <iostream>
+#define RENDERDOC_STDOUT std::cout
+#endif//RENDERDOC_STDOUT
 
 #ifndef RENDERDOC_CAPTURE_PATH
 #define RENDERDOC_CAPTURE_PATH __FILE__ "/../RenderDocCaptures/capture"
@@ -85,8 +91,8 @@ static bool InitRenderDoc()
 
     /*auto*/ void* hRenderDocLib = LoadRenderDocLibrary( STR(RENDERDOC_PATH/RENDERDOC_LIB) );
     RenderDocAssert(hRenderDocLib);
-    debug(user_context) << "Loaded runtime library 'renderdoc.dll' at location " << hRenderDocLib << "\n";
-    pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)GetRenderDocProcAddr(hRenderDocLib, "RENDERDOC_GetAPI");
+    RENDERDOC_STDOUT << "Loaded runtime library 'renderdoc.dll' at location " << hRenderDocLib << "\n";
+    pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)GetRenderDocProcAddr((HMODULE)hRenderDocLib, "RENDERDOC_GetAPI");
     RenderDocAssert(RENDERDOC_GetAPI);
 
     /*auto*/ int status = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_0_0, (void**)&RenderDocAPI);
