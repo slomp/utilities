@@ -1,0 +1,2 @@
+alias inject_git='source <path-to>/inject_git.sh'
+alias inject_python='source <path-to>/inject_python.sh'
