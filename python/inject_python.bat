@@ -2,5 +2,10 @@
 :: You may use, distribute and modify this code under the
 :: terms of the MIT license.
 
-set PATH=<path-to-WinPython>\python-2.7.13.amd64;%PATH%
+@SET PYTHON_VERSION=%1
+
+:: if no Python version is given, default to Python 3.x
+@IF [%PYTHON_VERSION%] == [] set PYTHON_VERSION=3
+
+@SET PATH=<path-to-python>\\%PYTHON_VERSION%;%PATH%
 where python
