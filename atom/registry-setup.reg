@@ -1,0 +1,60 @@
+Windows Registry Editor Version 5.00
+
+
+
+; Register the Atom Editor in the system (for all users: HKLM)
+
+[HKEY_LOCAL_MACHINE\Software\Classes\Applications\atom_launcher.bat]
+@="GitHub Atom Editor"
+
+[HKEY_LOCAL_MACHINE\Software\Classes\Applications\atom_launcher.bat\DefaultIcon]
+@="E:\\Tools\\Atom\\Atom\\atom.exe,0"
+
+[HKEY_LOCAL_MACHINE\Software\Classes\Applications\atom_launcher.bat\shell]
+
+[HKEY_LOCAL_MACHINE\Software\Classes\Applications\atom_launcher.bat\shell\open]
+
+[HKEY_LOCAL_MACHINE\Software\Classes\Applications\atom_launcher.bat\shell\open\command]
+@="\"E:\\Tools\\Atom\\atom_launcher.bat\" \"%1\""
+
+
+
+; Associate Julia source code files (.jl) with Atom
+
+[HKEY_LOCAL_MACHINE\Software\Classes\jl_auto_file]
+@="Julia Language Source File"
+
+[HKEY_LOCAL_MACHINE\Software\Classes\jl_auto_file\DefaultIcon]
+@="E:\\Tools\\Atom\\Icons\\julia.ico,0"
+
+[HKEY_LOCAL_MACHINE\Software\Classes\jl_auto_file\shell]
+
+[HKEY_LOCAL_MACHINE\Software\Classes\jl_auto_file\shell\open]
+
+[HKEY_LOCAL_MACHINE\Software\Classes\jl_auto_file\shell\open\command]
+@="\"E:\\Tools\\Atom\\atom_launcher.bat\" \"%1\""
+
+[HKEY_LOCAL_MACHINE\Software\Classes\.jl]
+@="jl_auto_file"
+"PerceivedType"="text"
+
+
+
+; Associate Markdown document files (.md) with Atom
+
+[HKEY_LOCAL_MACHINE\Software\Classes\md_auto_file]
+@="Markdown Document File"
+
+[HKEY_LOCAL_MACHINE\Software\Classes\md_auto_file\DefaultIcon]
+@="E:\\Tools\\Atom\\Icons\\markdown-black.ico,0"
+
+[HKEY_LOCAL_MACHINE\Software\Classes\md_auto_file\shell]
+
+[HKEY_LOCAL_MACHINE\Software\Classes\md_auto_file\shell\open]
+
+[HKEY_LOCAL_MACHINE\Software\Classes\md_auto_file\shell\open\command]
+@="\"E:\\Tools\\Atom\\atom_launcher.bat\" \"%1\""
+
+[HKEY_LOCAL_MACHINE\Software\Classes\.md]
+@="md_auto_file"
+"PerceivedType"="text"
