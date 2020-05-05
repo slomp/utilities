@@ -50,6 +50,18 @@
     #define RenderDocPrint(msg)                 printf("%s", msg)
 #endif//RenderDocPrint
 
+#ifndef RenderDocPrintHandle
+    #include <stdio.h>  // sprintf_s
+    static void RenderDocPrintHandle_builtin(void* p)
+    {
+        // TODO: sprintf_s is overkill/invasive here...
+        char text [sizeof(void*) * 4] = { 0 };
+        sprintf_s(text, sizeof(text), "%p", p);
+        RenderDocPrint(text);
+    }
+    #define RenderDocPrintHandle(handle)        RenderDocPrintHandle_builtin(handle)
+#endif//RenderDocPrintHandle
+
 #ifndef RENDERDOC_LIB
     #ifdef _WIN32
         #define RENDERDOC_LIB                   renderdoc.dll
@@ -91,15 +103,6 @@
 
 typedef RENDERDOC_API_1_0_0 RENDERDOC_API_CONTEXT;
 static RENDERDOC_API_CONTEXT* RenderDocAPI = /*nullptr*/ NULL;
-
-#include <stdio.h>  // sprintf_s
-static void RenderDocPrintHandle(void* p)
-{
-    // TODO: sprintf_s is overkill/invasive here...
-    char text [sizeof(void*) * 4] = { 0 };
-    sprintf_s(text, sizeof(text), "%p", p);
-    RenderDocPrint(text);
-}
 
 static bool InitRenderDoc()
 {
@@ -148,7 +151,12 @@ static void StartCapturingGPUActivity(void* device = NULL)
 
 static void FinishCapturingGPUActivity(void* device = NULL)
 {
-    RenderDocAPI->EndFrameCapture(device, NULL);
+    int status = RenderDocAPI->EndFrameCapture(device, NULL);
+    if (status != 1)
+    {
+        RenderDocPrint("RenderDocGlue: ERROR while capturing frame...\n");
+        return;
+    }
 
     // find the latest capture and launch it with the RenderDoc UI:
     // (Beware! Here There be Dragons! Pretty darn horrendous API...)
