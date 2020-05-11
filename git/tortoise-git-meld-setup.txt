@@ -1,0 +1,5 @@
+diff tool:
+<path-to-Meld.exe>
+
+merge tool:
+<path-to-Meld.exe> --auto-merge "%mine" "%base" "%theirs" --output "%merged"
