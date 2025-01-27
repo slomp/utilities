@@ -6,10 +6,13 @@
     "explorer.confirmDelete": false,
 
     "terminal.integrated.profiles.windows": {
-        "Git Bash": {
-          "path": "C:\\Tools\\Git\\current\\bin\\bash.exe",
-          "args": ["--cd=${workspaceFolder}"]
-        },
+        "MinGW 64": {
+          // https://www.msys2.org/wiki/Launchers/
+          // https://stackoverflow.com/a/47762235
+          "path": "C:\\Tools\\MSYS2\\usr\\bin\\bash.exe",
+          "env": { "MSYSTEM": "MINGW64", "HOME": "${env:USERPROFILE}", "CHERE_INVOKING": "1" },
+          "args": ["-li"]
+        }
       },
 
       "terminal.integrated.defaultProfile.windows": "PowerShell",
