@@ -1,0 +1,17 @@
+// %USERPROFILE%\AppData\Roaming\Code\User\settings.json
+
+{
+    "security.workspace.trust.untrustedFiles": "open",
+    "git.path": "C:\\Tools\\git\\current\\bin\\git.exe",
+    "explorer.confirmDelete": false,
+
+    "terminal.integrated.profiles.windows": {
+        "Git Bash": {
+          "path": "C:\\Tools\\Git\\current\\bin\\bash.exe",
+          "args": ["--cd=${workspaceFolder}"]
+        },
+      },
+      "terminal.integrated.defaultProfile.windows": "PowerShell",
+      "diffEditor.ignoreTrimWhitespace": false,
+      "terminal.integrated.defaultProfile.linux": "",
+}
