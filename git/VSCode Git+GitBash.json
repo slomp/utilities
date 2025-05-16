@@ -9,6 +9,7 @@
         "Git Bash": {
           "path": "C:\\Tools\\Git\\current\\bin\\bash.exe",
           "args": ["--cd=${workspaceFolder}"]
+          // consider using "--cd=." (for when there is workspace folder opened)
         },
       },
 
